@@ -1,0 +1,34 @@
+{
+    "task": "How to cook pasta puttanesca",
+    "different_tasks": [
+        "Fixing a leaky faucet",
+        "Writing a report on climate change",
+        "Designing a website",
+        "Practicing yoga",
+        "Building a bookshelf",
+        "Creating a budget for a small business",
+        "Teaching a child how to ride a bike",
+        "Planning a vacation",
+        "Performing a Shakespeare play",
+        "Developing a new mobile app"
+    ],
+    "similar_tasks": [
+        "How to cook spaghetti aglio e olio",
+        "How to make carbonara pasta",
+        "How to cook pasta with tomato sauce",
+        "How to make pesto pasta",
+        "How to cook pasta with garlic and olive oil",
+        "How to make lasagna",
+        "How to cook pasta with alfredo sauce",
+        "How to make mac and cheese",
+        "How to cook pasta with meatballs",
+        "How to make fettuccine alfredo"
+    ],
+    "others": [
+        "a blue ballpoint pen",
+        "the city bus stop",
+        "the notion of luck",
+        "Dayton, OH",
+        "getting rained on"
+    ]
+}
