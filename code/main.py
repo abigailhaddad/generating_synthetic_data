@@ -12,4 +12,3 @@ if __name__ == "__main__":
     for text in generated_texts_result:
         print(text.category)
         print(text.label)
-    
