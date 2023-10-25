@@ -60,6 +60,18 @@ class TaskGenerationPipeline:
 
         return generated_texts
 
+    @property
+    def generated_texts(self):
+        return self._generated_texts
+
+    @generated_texts.setter
+    def generated_texts(self, value):
+        self._generated_texts = value
+
+    def save_generated_texts(self):
+        logging.info("Saving updated generated texts to file...")
+        all_generated_texts = [text.to_dict() for text in self.generated_texts]
+        FileManager.save_to_json(all_generated_texts, '../results/generated_texts.json')
 
 
 if __name__ == "__main__":

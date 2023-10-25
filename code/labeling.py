@@ -40,3 +40,5 @@ class Labeler:
 
     def process_labeled_data(self, filename='../results/texts_for_labeling.csv'):
         self.import_from_csv(filename)
+
+    
