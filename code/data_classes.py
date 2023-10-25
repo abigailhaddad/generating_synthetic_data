@@ -55,7 +55,7 @@ class GeneratedText:
             "prompt": self.prompt,
             "query": self.query,
             "category": self.category,
-            "label": selcf.label
+            "label": self.label
         }
     
     @classmethod
@@ -67,5 +67,11 @@ class GeneratedText:
             category=data["category"],
             label=data.get("label", None)
         )
+    def __repr__(self):
+        return (f"GeneratedText(\n"
+                f"  Text: {self.text}\n"
+                f"  Prompt: {self.prompt}\n"
+                f"  Query: {self.query}\n"
+                f")") 
 
 

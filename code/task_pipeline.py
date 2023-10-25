@@ -16,11 +16,13 @@ class TaskGenerationPipeline:
         self.prompts = prompts
         self.generated_texts = []
     
-    def run(self, use_existing_files=False):
+    def run(self, use_existing_files=False) -> List[GeneratedText]:
         if use_existing_files:
             self.load_data_from_files()
         else:
             self.generate_and_save_data()
+        return self.generated_texts
+
     
     def generate_and_save_data(self):
         logging.info("Generating base task data...")
@@ -62,4 +64,7 @@ class TaskGenerationPipeline:
 
 if __name__ == "__main__":
     pipeline = TaskGenerationPipeline("How to cook pasta puttanesca", list_of_prompts)
-    pipeline.run(use_existing_files=True)
+    generated_texts_result = pipeline.run(use_existing_files=False)
+    for text in generated_texts_result:
+        print(text)
+
