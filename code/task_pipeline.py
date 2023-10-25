@@ -29,8 +29,9 @@ class TaskGenerationPipeline:
         FileManager.save_to_json(base_task_data, '../results/base_task.json')
         logging.info("Generating texts for tasks...")
         self.generated_texts = self.generate_texts_for_task(self.base_task, self.prompts, base_task_runs=1, other_task_runs=1)
-        for text in tqdm(self.generated_texts, desc="Saving generated texts"):
-            FileManager.save_to_json(text.to_dict(), '../results/generated_texts.json')
+        all_generated_texts = [text.to_dict() for text in self.generated_texts]
+        FileManager.save_to_json(all_generated_texts, '../results/generated_texts.json')
+
     
     def load_data_from_files(self):
         logging.info("Loading data from files...")
