@@ -67,4 +67,3 @@ if __name__ == "__main__":
     generated_texts_result = pipeline.run(use_existing_files=False)
     for text in generated_texts_result:
         print(text)
-
