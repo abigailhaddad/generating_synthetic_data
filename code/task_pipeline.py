@@ -1,5 +1,4 @@
 import logging
-from tqdm import tqdm
 from openai_agent import OpenAIAgent
 from file_manager import FileManager
 from data_classes import BaseTask, GeneratedText
@@ -44,19 +43,23 @@ class TaskGenerationPipeline:
             model = settings.llm_model
 
         # Select tasks with repetition
-        all_tasks = [base_task.task] * base_task_runs + base_task.different_tasks * other_task_runs + base_task.similar_tasks * other_task_runs + base_task.others * other_task_runs
+        all_tasks = [(base_task.task, 'base_task')] * base_task_runs \
+              + [(task, 'different_tasks') for task in base_task.different_tasks] * other_task_runs \
+              + [(task, 'similar_tasks') for task in base_task.similar_tasks] * other_task_runs \
+              + [(task, 'others') for task in base_task.others] * other_task_runs
 
         # Generating responses for all combinations of queries and tasks, then storing them in GeneratedText instances
         generated_texts = []
         for query in queries[0:1]:
-            for task in all_tasks:
+            for task, category in all_tasks:
                 prompt = f"{query} {task}"
                 response_text = self.openai_agent.call_openai(prompt, model) 
-                generated_texts.append(GeneratedText(response_text, prompt, query))
+                generated_texts.append(GeneratedText(response_text, prompt, query, category))
 
         return generated_texts
 
 
+
 if __name__ == "__main__":
     pipeline = TaskGenerationPipeline("How to cook pasta puttanesca", list_of_prompts)
-    pipeline.run(use_existing_files=False)
+    pipeline.run(use_existing_files=True)

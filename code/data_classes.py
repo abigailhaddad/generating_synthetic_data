@@ -42,16 +42,20 @@ class BaseTask:
                 f")")
 
 class GeneratedText:
-    def __init__(self, text: str, prompt: str, query: str):
+    def __init__(self, text: str, prompt: str, query: str, category: str = None, label: int = None):
         self.text = text
         self.prompt = prompt
         self.query = query
+        self.category = category
+        self.label = label
 
     def to_dict(self):
         return {
             "text": self.text,
             "prompt": self.prompt,
-            "query": self.query
+            "query": self.query,
+            "category": self.category,
+            "label": selcf.label
         }
     
     @classmethod
@@ -59,12 +63,9 @@ class GeneratedText:
         return cls(
             text=data["text"],
             prompt=data["prompt"],
-            query=data["query"]
+            query=data["query"],
+            category=data["category"],
+            label=data.get("label", None)
         )
 
-    def __repr__(self):
-        return (f"GeneratedText(\n"
-                f"  Text: {self.text}\n"
-                f"  Prompt: {self.prompt}\n"
-                f"  Query: {self.query}\n"
-                f")")
+
