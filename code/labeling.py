@@ -33,10 +33,10 @@ class Labeler:
                 else:
                     print(f"Warning: Skipped an empty label for text: {obj.text}")
 
-
-    def run(self):
+    def prepare_for_manual_labeling(self):
         self.auto_label()
         self.export_to_csv('../results/texts_for_labeling.csv')
-        # You will manually label using the exported CSV here.
-        input("Please manually label the data in 'texts_for_labeling.csv'. Press Enter when done.")
-        self.import_from_csv('../results/texts_for_labeling.csv')
+        print("Data has been exported to 'texts_for_labeling.csv'. Please label the data and then proceed to the next step.")
+
+    def process_labeled_data(self, filename='../results/texts_for_labeling.csv'):
+        self.import_from_csv(filename)
