@@ -16,20 +16,20 @@ class TaskGenerationPipeline:
         self.prompts = prompts
         self.generated_texts = []
     
-    def run(self, use_existing_files=False) -> List[GeneratedText]:
+    def run(self, use_existing_files=False, base_task_runs=1, other_task_runs=1) -> List[GeneratedText]:
         if use_existing_files:
             self.load_data_from_files()
         else:
-            self.generate_and_save_data()
+            self.generate_and_save_data(base_task_runs=base_task_runs, other_task_runs=other_task_runs)
         return self.generated_texts
 
     
-    def generate_and_save_data(self):
+    def generate_and_save_data(self, base_task_runs=1, other_task_runs=1):
         logging.info("Generating base task data...")
         base_task_data = self.base_task.to_dict()
         FileManager.save_to_json(base_task_data, '../results/base_task.json')
         logging.info("Generating texts for tasks...")
-        self.generated_texts = self.generate_texts_for_task(self.base_task, self.prompts, base_task_runs=1, other_task_runs=1)
+        self.generated_texts = self.generate_texts_for_task(self.base_task, self.prompts, base_task_runs=base_task_runs, other_task_runs=other_task_runs)
         all_generated_texts = [text.to_dict() for text in self.generated_texts]
         FileManager.save_to_json(all_generated_texts, '../results/generated_texts.json')
 
@@ -40,6 +40,7 @@ class TaskGenerationPipeline:
         loaded_texts = FileManager.load_from_json('../results/generated_texts.json')
         self.generated_texts = [GeneratedText.from_dict(data) for data in loaded_texts]
 
+    
     def generate_texts_for_task(self, base_task: BaseTask, queries: List[str], model: str = None, base_task_runs: int = 1, other_task_runs: int = 1) -> List[GeneratedText]:
         if model is None:
             model = settings.llm_model
@@ -52,8 +53,8 @@ class TaskGenerationPipeline:
 
         # Generating responses for all combinations of queries and tasks, then storing them in GeneratedText instances
         generated_texts = []
-        for query in queries[0:1]:
-            for task, category in all_tasks:
+        for query in queries:
+            for task, category in all_tasks[0:1]:
                 prompt = f"{query} {task}"
                 response_text = self.openai_agent.call_openai(prompt, model) 
                 generated_texts.append(GeneratedText(response_text, prompt, query, category))
