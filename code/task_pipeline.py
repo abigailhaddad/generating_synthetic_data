@@ -54,7 +54,7 @@ class TaskGenerationPipeline:
         # Generating responses for all combinations of queries and tasks, then storing them in GeneratedText instances
         generated_texts = []
         for query in queries:
-            for task, category in all_tasks[0:1]:
+            for task, category in all_tasks:
                 prompt = f"{query} {task}"
                 response_text = self.openai_agent.call_openai(prompt, model) 
                 generated_texts.append(GeneratedText(response_text, prompt, query, category))
