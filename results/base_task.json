@@ -1,28 +1,28 @@
 {
     "task": "How to cook pasta puttanesca",
     "different_tasks": [
-        "How to build a birdhouse",
-        "How to write a love letter",
-        "How to meditate",
-        "How to calculate your taxes",
-        "How to design a website",
-        "How to play a musical instrument",
-        "How to train a dog",
-        "How to do yoga",
         "How to fix a leaky faucet",
-        "How to create a budget"
+        "How to build a website",
+        "How to perform CPR",
+        "How to plant a garden",
+        "How to write a resume",
+        "How to tie a tie",
+        "How to change a flat tire",
+        "How to meditate",
+        "How to play the guitar",
+        "How to solve a Rubik's Cube"
     ],
     "similar_tasks": [
+        "How to make spaghetti carbonara",
+        "How to cook penne arrabbiata",
+        "How to make fettuccine alfredo",
+        "How to prepare linguine with clams",
         "How to cook spaghetti aglio e olio",
-        "How to make shrimp scampi",
-        "How to make chicken piccata",
-        "How to make marinara sauce",
-        "How to make garlic bread",
-        "How to make roasted red pepper pasta",
-        "How to make pesto sauce",
-        "How to make caprese salad",
-        "How to make bruschetta",
-        "How to make spaghetti carbonara"
+        "How to make pasta primavera",
+        "How to prepare pasta alla norma",
+        "How to cook tagliatelle with ragu",
+        "How to make pasta with tomato sauce",
+        "How to prepare pasta with pesto sauce"
     ],
     "others": [
         "a blue ballpoint pen",

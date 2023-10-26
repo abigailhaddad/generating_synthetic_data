@@ -2,6 +2,7 @@ import openai
 from marvin import settings
 from typing import Optional
 import os
+import random
 
 class OpenAIAgent:
     def __init__(self, api_key: Optional[str] = None):
@@ -16,13 +17,14 @@ class OpenAIAgent:
     def call_openai(self, prompt_text: str, model: str = settings.llm_model) -> str:
         """Calls OpenAI with the provided prompt and returns the generated response."""
         messages = [{"role": "user", "content": prompt_text}]
+        temperature = random.uniform(0, 1.0)
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=messages,
                 max_tokens=250,
                 timeout = settings.llm_request_timeout_seconds,
-                temperature=0.0  # You can adjust the temperature if needed
+                temperature = temperature
             )
             return response.choices[0]['message']['content'].strip()
         except Exception as e:
