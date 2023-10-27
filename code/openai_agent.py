@@ -3,6 +3,7 @@ from marvin import settings
 from typing import Optional
 import os
 import random
+import logging
 
 class OpenAIAgent:
     def __init__(self, api_key: Optional[str] = None):
@@ -30,4 +31,5 @@ class OpenAIAgent:
         except Exception as e:
             # Handle other exceptions
             print(f"Unexpected error: {e}")
+            logging.error(f"An error occurred: {e}")
             return ""  # Return an empty string or whatever default you prefer

@@ -7,7 +7,7 @@ from marvin import settings
 from prompts_for_model import list_of_prompts
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 class TaskGenerationPipeline:
     def __init__(self, base_task_str: str, prompts: List[str]):
@@ -53,10 +53,13 @@ class TaskGenerationPipeline:
 
         # Generating responses for all combinations of queries and tasks, then storing them in GeneratedText instances
         generated_texts = []
+
         for query in queries:
             for task, category in all_tasks:
                 prompt = f"{query} {task}"
-                response_text = self.openai_agent.call_openai(prompt, model) 
+                logging.debug(f"Generating response for prompt: {prompt}")
+                response_text = self.openai_agent.call_openai(prompt, model)
+                logging.debug(f"Received response: {response_text}")
                 generated_texts.append(GeneratedText(response_text, prompt, query, category))
 
         return generated_texts
