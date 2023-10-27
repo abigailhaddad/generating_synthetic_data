@@ -15,33 +15,39 @@ class TaskGenerationPipeline:
         self.base_task = BaseTask(base_task_str)
         self.prompts = prompts
         self.generated_texts = []
-    
+
+        logging.debug(f"Initialized TaskGenerationPipeline with base_task: {base_task_str}")
+
     def run(self, use_existing_files=False, base_task_runs=1, other_task_runs=1) -> List[GeneratedText]:
+        logging.debug(f"Running pipeline with base_task_runs: {base_task_runs}, other_task_runs: {other_task_runs}")
         if use_existing_files:
             self.load_data_from_files()
         else:
             self.generate_and_save_data(base_task_runs=base_task_runs, other_task_runs=other_task_runs)
         return self.generated_texts
 
-    
     def generate_and_save_data(self, base_task_runs=1, other_task_runs=1):
         logging.info("Generating base task data...")
         base_task_data = self.base_task.to_dict()
         FileManager.save_to_json(base_task_data, '../results/base_task.json')
+
         logging.info("Generating texts for tasks...")
         self.generated_texts = self.generate_texts_for_task(self.base_task, self.prompts, base_task_runs=base_task_runs, other_task_runs=other_task_runs)
+
+        logging.debug(f"Generated texts count: {len(self.generated_texts)}")
+
         all_generated_texts = [text.to_dict() for text in self.generated_texts]
         FileManager.save_to_json(all_generated_texts, '../results/generated_texts.json')
 
-    
     def load_data_from_files(self):
         logging.info("Loading data from files...")
         self.base_task = BaseTask.from_dict(FileManager.load_from_json('../results/base_task.json'))
         loaded_texts = FileManager.load_from_json('../results/generated_texts.json')
         self.generated_texts = [GeneratedText.from_dict(data) for data in loaded_texts]
 
-    
     def generate_texts_for_task(self, base_task: BaseTask, queries: List[str], model: str = None, base_task_runs: int = 1, other_task_runs: int = 1) -> List[GeneratedText]:
+        logging.debug(f"Generating texts for task with base_task_runs: {base_task_runs}, other_task_runs: {other_task_runs}")
+
         if model is None:
             model = settings.llm_model
 
@@ -50,6 +56,8 @@ class TaskGenerationPipeline:
               + [(task, 'different_tasks') for task in base_task.different_tasks] * other_task_runs \
               + [(task, 'similar_tasks') for task in base_task.similar_tasks] * other_task_runs \
               + [(task, 'others') for task in base_task.others] * other_task_runs
+
+        logging.debug(f"Total tasks generated for processing: {len(all_tasks)}")
 
         # Generating responses for all combinations of queries and tasks, then storing them in GeneratedText instances
         generated_texts = []
