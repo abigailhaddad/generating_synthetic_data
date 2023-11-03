@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import datasets
 import evaluate
+import os
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -67,6 +68,7 @@ def training_setup(model_checkpoint, id2label, label2id):
         load_best_model_at_end=True,
         push_to_hub=False,
     )
+    print(f"Resolved output directory: {os.path.abspath(training_args.output_dir)}")
     return model, training_args
 
 # Calculate metrics for evaluation
@@ -105,7 +107,7 @@ def predict_and_save_results(trainer, test_dataset, test_df, output_path):
     return test_df
 
 def main():
-    file_path = "../data/generated_texts.json"
+    file_path = "../results/generated_texts.json"
     df = load_data(file_path)
 
     # Splitting the data
@@ -124,9 +126,10 @@ def main():
     model_checkpoint = "microsoft/deberta-v3-base"
     dataset = create_hf_datasets(train_df, test_df)
     tokenized_dataset, tokenizer = tokenize_data(dataset, model_checkpoint)
-
+    
     # Setup training parameters and train the model
     model, training_args = training_setup(model_checkpoint, id2label, label2id)
+
     trainer = train_model(tokenized_dataset, model, tokenizer, training_args)
 
     # Save the trained model
@@ -143,7 +146,9 @@ def main():
         json.dump(eval_results, f, indent=4)
     print(eval_results)
     return(eval_results)
+    
 
 # Run the main function
 if __name__ == "__main__":
     eval_results=main()
+
