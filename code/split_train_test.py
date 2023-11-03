@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
 import numpy as np
 import datasets
 import evaluate
@@ -92,35 +93,38 @@ def train_model(tokenized_dataset, model, tokenizer, training_args):
     trainer.train()
     return trainer
 
-def predict_and_save_results(trainer, test_dataset, test_df, output_path):
-    # Making predictions on the test dataset
-    predictions, labels, _ = trainer.predict(test_dataset)
+def predict_and_save_results(trainer, dataset, df, output_path, label_map):
+    predictions, labels, _ = trainer.predict(dataset)
     predictions = np.argmax(predictions, axis=1)
     
     # Add predictions to the dataframe
-    test_df['prediction'] = predictions
-    test_df['prediction_label'] = test_df['prediction'].map(trainer.model.config.id2label)
-
+    df['prediction'] = predictions
+    df['prediction_label'] = df['prediction'].map(label_map)
+    
     # Save the updated dataframe with predictions to a CSV file
-    test_df.to_csv(output_path, index=False)
+    df.to_csv(output_path, index=False)
 
-    return test_df
+    return df
+
+# A helper function to print the confusion matrix
+def print_confusion_matrix(confusion_matrix, label_classes):
+    print("Confusion Matrix:")
+    print(confusion_matrix)
+    print("\nClassification Report:")
+    print(classification_report(confusion_matrix, target_names=label_classes))
 
 def main():
+    # Load and split the data
     file_path = "../results/generated_texts.json"
     df = load_data(file_path)
-
-    # Splitting the data
     train_base, test_base = split_data(df, is_base_task=True)
     train_non_base, test_non_base = split_data(df, is_base_task=False)
-
-    # Combine splits into training and testing dataframes
     train_df = pd.concat([train_base, train_non_base])
     test_df = pd.concat([test_base, test_non_base])
 
     # Define the mappings for labels
-    id2label = {0: "not_injected", 1: "injected"}
-    label2id = {"not_injected": 0, "injected": 1}
+    id2label = {0: "no_instructions", 1: "contains_instructions"}
+    label2id = {"contains_instructions": 0, "no_instructions": 1}
 
     # Tokenize the data
     model_checkpoint = "microsoft/deberta-v3-base"
@@ -129,23 +133,30 @@ def main():
     
     # Setup training parameters and train the model
     model, training_args = training_setup(model_checkpoint, id2label, label2id)
-
     trainer = train_model(tokenized_dataset, model, tokenizer, training_args)
 
     # Save the trained model
     model_save_path = "../model/trained_model"
     trainer.save_model(model_save_path)
 
-    # Get the results and predictions
-    predictions_output_path = "../results/test_data_with_predictions.csv"
-    test_results = predict_and_save_results(trainer, tokenized_dataset["test"], test_df, predictions_output_path)
-
-    # Evaluate the model and print out the evaluation results
+    # Evaluate the model on the test dataset and save the results
     eval_results = trainer.evaluate(tokenized_dataset["test"])
     with open("../results/evaluation_metrics.json", "w") as f:
         json.dump(eval_results, f, indent=4)
-    print(eval_results)
-    return(eval_results)
+    print("Evaluation Results on Test Data:", eval_results)
+
+    # Save predictions for training and test data
+    train_predictions_output_path = "../results/train_data_with_predictions.csv"
+    test_predictions_output_path = "../results/test_data_with_predictions.csv"
+    predict_and_save_results(trainer, tokenized_dataset["train"], train_df, train_predictions_output_path, trainer.model.config.id2label)
+    predict_and_save_results(trainer, tokenized_dataset["test"], test_df, test_predictions_output_path, trainer.model.config.id2label)
+    
+    return eval_results
+    
+
+if __name__ == "__main__":
+    eval_results = main()
+
     
 
 # Run the main function
