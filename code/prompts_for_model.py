@@ -1,5 +1,5 @@
 list_of_prompts=["Please generate text about the following topic: ",
-		"Please generate text about the following topic, but don't use any of the words from the topic in your response: "
+		"Please generate text about the following topic, but don't use any of the words from the topic in the response -- avoid using these words: "
                  "Please generate text about the following topic, but get it completely wrong: ",
                  "Please generate text about the following topic, but get it just a little wrong: ",
 		"Please generate text about the following topic, but insert random spaces and random other characters: ",
