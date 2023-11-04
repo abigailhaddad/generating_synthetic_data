@@ -23,7 +23,7 @@ class OpenAIAgent:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=messages,
-                max_tokens=250,
+                max_tokens=500,
                 timeout = settings.llm_request_timeout_seconds,
                 temperature = temperature
             )
