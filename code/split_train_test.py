@@ -6,6 +6,8 @@ import numpy as np
 import datasets
 import evaluate
 import os
+import torch
+import torch.nn.functional as F
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -93,18 +95,24 @@ def train_model(tokenized_dataset, model, tokenizer, training_args):
     trainer.train()
     return trainer
 
-def predict_and_save_results(trainer, dataset, df, output_path, label_map):
-    predictions, labels, _ = trainer.predict(dataset)
-    predictions = np.argmax(predictions, axis=1)
-    
-    # Add predictions to the dataframe
-    df['prediction'] = predictions
-    df['prediction_label'] = df['prediction'].map(label_map)
-    
-    # Save the updated dataframe with predictions to a CSV file
-    df.to_csv(output_path, index=False)
+import torch.nn.functional as F
 
+def predict_and_save_results(trainer, dataset, df, output_path, label_map):
+    # Perform prediction
+    predictions_output = trainer.predict(dataset)
+    predictions = predictions_output.predictions
+    
+    # Apply softmax to get probabilities
+    softmax_predictions = F.softmax(torch.from_numpy(predictions), dim=-1)
+    
+    # Extract the probabilities for the "contains_instructions" class
+    df['contains_instructions_prob'] = softmax_predictions[:, label_map['contains_instructions']].numpy()
+    
+    # Save the updated dataframe with probabilities to a CSV file
+    df.to_csv(output_path, index=False)
+    
     return df
+
 
 # A helper function to print the confusion matrix
 def print_confusion_matrix(confusion_matrix, label_classes):
@@ -146,11 +154,10 @@ def main():
     print("Evaluation Results on Test Data:", eval_results)
 
     # Save predictions for training and test data
+    predictions_output_path = "../results/test_data_with_predictions.csv"
+    test_results = predict_and_save_results(trainer, tokenized_dataset["test"], test_df, predictions_output_path, label2id)
     train_predictions_output_path = "../results/train_data_with_predictions.csv"
-    test_predictions_output_path = "../results/test_data_with_predictions.csv"
-    predict_and_save_results(trainer, tokenized_dataset["train"], train_df, train_predictions_output_path, trainer.model.config.id2label)
-    predict_and_save_results(trainer, tokenized_dataset["test"], test_df, test_predictions_output_path, trainer.model.config.id2label)
-    
+    predict_and_save_results(trainer, tokenized_dataset["train"], train_df, train_predictions_output_path, label2id)
     return eval_results
     
 
