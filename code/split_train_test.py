@@ -18,9 +18,10 @@ from transformers import (
 
 # Load data from JSON file
 def load_data(file_path):
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding='utf-8', errors='replace') as f:
         data = json.load(f)
-        return pd.DataFrame(data)
+    return pd.DataFrame(data).dropna(subset=['text', 'label'])
+
 
 # Split data based on whether it's base task or not
 def split_data(df, is_base_task, test_size=0.5, random_state=42):
