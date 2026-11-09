@@ -133,7 +133,7 @@ def main():
 
     # Define the mappings for labels
     id2label = {0: "no_instructions", 1: "contains_instructions"}
-    label2id = {"contains_instructions": 0, "no_instructions": 1}
+    label2id = {"no_instructions": 0, "contains_instructions": 1}
 
     # Tokenize the data
     model_checkpoint = "microsoft/deberta-v3-base"
